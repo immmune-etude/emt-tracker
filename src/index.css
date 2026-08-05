@@ -1,0 +1,62 @@
+:root {
+  --bg: #f3efe6;
+  --bg-accent: #e7efe9;
+  --surface: #fffcf7;
+  --surface-2: #f7f3eb;
+  --ink: #1c2420;
+  --ink-soft: #4a554e;
+  --muted: #7a847c;
+  --line: #d8d2c4;
+  --line-strong: #b9b2a2;
+  --accent: #0d6b52;
+  --accent-soft: #d6ebe3;
+  --warn: #8a5310;
+  --danger: #a12d2d;
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(28, 36, 32, 0.06);
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "DM Sans", "Avenir Next", "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, #d9ebe4 0%, transparent 55%),
+    radial-gradient(ellipse 70% 45% at 100% 0%, #efe4d2 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-accent) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--accent);
+}
