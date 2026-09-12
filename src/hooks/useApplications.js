@@ -1,17 +1,40 @@
 import { useState, useEffect, useCallback } from "react";
+import { SEED_APPLICATIONS } from "../data/companies";
 
 const STORAGE_KEY = "emt_tracker_data";
+
+function mergeSeeds(stored) {
+  const next = { ...stored };
+  let changed = false;
+  for (const [id, seed] of Object.entries(SEED_APPLICATIONS)) {
+    if (!next[id]) {
+      next[id] = { ...seed };
+      changed = true;
+    }
+  }
+  return { next, changed };
+}
 
 export function useApplications() {
   const [applications, setApplications] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let stored = {};
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setApplications(JSON.parse(raw));
+      if (raw) stored = JSON.parse(raw) || {};
     } catch {
       /* ignore corrupt storage */
+    }
+    const { next, changed } = mergeSeeds(stored);
+    setApplications(next);
+    if (changed) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* quota / private mode */
+      }
     }
     setLoading(false);
   }, []);

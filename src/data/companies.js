@@ -311,7 +311,50 @@ export const COMPANIES = [
     interviewNotes:
       "Limited data. Company emphasizes professionalism — dress sharp, know your protocols.",
   },
+  {
+    id: "medreach",
+    name: "MedReach Ambulance",
+    type: "Hybrid",
+    difficulty: 1,
+    difficultyLabel: "Easy",
+    pay: "~$20/hr (reports $18–23.50)",
+    payMin: 20,
+    hireTime: "Unknown",
+    hireDays: 21,
+    area: "Compton / Rancho Dominguez (1303 Kona Dr) · LA County",
+    hiringStatus: "Hiring",
+    entryFriendly: true,
+    website: "https://medreachambulance.com/",
+    topPick: false,
+    summary:
+      "Woman-owned LA County BLS shop since 1987. Compton / Rancho Dominguez base — close enough for South Bay / Compton area runs. Mix of scheduled transport and 911-provider contracts. Partners with CSUDH EMT program on tuition reimbursement (up to $1,500 for full-time hires). Smaller team (~25 people); management has deep military EMS backgrounds.",
+    pros: [
+      "Compton base — South LA / Harbor-adjacent",
+      "CSUDH EMT tuition reimbursement partnership",
+      "Certification cost reimbursement",
+      "Flexible FT/PT scheduling",
+      "Smaller company, veteran-led management",
+    ],
+    cons: [
+      "Limited public interview / Glassdoor data",
+      "Smaller footprint than AMR / Falck / McCormick",
+      "Pay around the regional midpoint, not top-tier",
+      "Mostly BLS — less ALS exposure than pure 911 shops",
+    ],
+    requirements:
+      "CA EMT cert, valid CPR/BLS, CA driver’s license with acceptable record; ambulance driver cert typically required",
+    interviewNotes:
+      "Limited public data. Contact GM Brett Selter / recruitment via medreachambulance.com or apply with resume + EMT card. Ask about CSUDH tuition reimbursement if you’re coming through that pipeline.",
+  },
 ];
+
+/** Seeded application progress (merged on first load if key missing). */
+export const SEED_APPLICATIONS = {
+  medreach: {
+    status: "applied",
+    dateApplied: "2026-09-12",
+  },
+};
 
 export const STATUS_OPTIONS = [
   { value: "not_applied", label: "Not applied", color: "#6B6A66" },
