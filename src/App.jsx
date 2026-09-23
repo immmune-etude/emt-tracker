@@ -95,7 +95,7 @@ export default function App() {
         <h1>{isOther ? "Other EMT opportunities" : "Ambulance company applications"}</h1>
         <p className="lede">
           {isOther
-            ? "Event-work leads near Westwood (90024), researched for a newly certified EMT. Eligibility notes distinguish applications from inquiries."
+            ? "Event and film/TV leads near Westwood (90024), researched for a newly certified EMT. Eligibility notes distinguish applications from inquiries."
             : `${iftCount} IFT · ${c911Count} 911 · ${hybridCount} hybrid near UCLA — start IFT, transfer to 911. Progress saves in this browser.`}
         </p>
       </header>
@@ -156,7 +156,7 @@ export default function App() {
 
         <div className="filter-row">
           <div className="type-filters" role="group" aria-label="Filter by type">
-            {(isOther ? ["All", "Events"] : TYPE_FILTERS).map((f) => (
+            {(isOther ? ["All", "Events", "Film / TV"] : TYPE_FILTERS).map((f) => (
               <button
                 key={f}
                 type="button"
