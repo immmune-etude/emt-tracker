@@ -40,7 +40,9 @@ export default function CompanyCard({ company, appData, onUpdate, forceOpen }) {
           <div className="card-title-row">
             <h2>{company.name}</h2>
             {company.topPick && <span className="chip chip-pick">Top pick</span>}
-            {!company.entryFriendly && (
+            {company.eligibility ? (
+              <span className="chip chip-warn">{company.eligibility}</span>
+            ) : !company.entryFriendly && (
               <span className="chip chip-warn">Age 23+</span>
             )}
           </div>
@@ -56,11 +58,12 @@ export default function CompanyCard({ company, appData, onUpdate, forceOpen }) {
               {company.type}
             </span>
             <span>{company.pay}</span>
-            <span className="dot">·</span>
-            <span>{company.hireTime}</span>
-            <span className="dot">·</span>
-            <DiffDots n={company.difficulty} />
-            <span className="diff-label">{company.difficultyLabel}</span>
+            {company.hireTime && <><span className="dot">·</span><span>{company.hireTime}</span></>}
+            {company.difficulty != null && <>
+              <span className="dot">·</span>
+              <DiffDots n={company.difficulty} />
+              <span className="diff-label">{company.difficultyLabel}</span>
+            </>}
           </div>
           <p className="card-summary">{company.summary}</p>
           <p className="card-area">{company.area}</p>
@@ -99,7 +102,7 @@ export default function CompanyCard({ company, appData, onUpdate, forceOpen }) {
           </div>
 
           <div className="info-block">
-            <h3>Interview notes</h3>
+            <h3>{company.eligibility ? "Next step" : "Interview notes"}</h3>
             <p>{company.interviewNotes}</p>
             <h3>Requirements</h3>
             <p>{company.requirements}</p>
@@ -151,9 +154,14 @@ export default function CompanyCard({ company, appData, onUpdate, forceOpen }) {
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
           >
-            Open careers page
+            {company.linkLabel || "Open careers page"}
             <span aria-hidden>→</span>
           </a>
+          {company.sources?.map((source) => (
+            <p className="source-link" key={source.url}>
+              <a href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>
+            </p>
+          ))}
         </div>
       )}
     </article>

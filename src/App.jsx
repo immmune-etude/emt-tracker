@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { COMPANIES, STATUS_OPTIONS } from "./data/companies";
+import { OPPORTUNITIES } from "./data/opportunities";
 import CompanyCard from "./components/CompanyCard";
 import { useApplications } from "./hooks/useApplications";
 import "./App.css";
@@ -9,6 +10,9 @@ const TYPE_FILTERS = ["All", "IFT", "911", "Hybrid"];
 export default function App() {
   const { applications, loading, updateApp, exportData, importData, resetAll } =
     useApplications();
+  const [section, setSection] = useState("ambulance");
+  const isOther = section === "other";
+  const companies = isOther ? OPPORTUNITIES : COMPANIES;
   const [typeFilter, setTypeFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("default");
@@ -17,7 +21,7 @@ export default function App() {
   const fileRef = useRef(null);
 
   const stats = useMemo(() => {
-    const values = Object.values(applications);
+    const values = companies.map((c) => applications[c.id] || {});
     return {
       researching: values.filter((a) => a.status === "researching").length,
       applied: values.filter((a) => a.status === "applied").length,
@@ -27,17 +31,17 @@ export default function App() {
         (a) => a.status && !["not_applied", "pass", "rejected"].includes(a.status)
       ).length,
     };
-  }, [applications]);
+  }, [applications, companies]);
 
   const filtered = useMemo(() => {
-    let list = COMPANIES.filter((c) => {
+    let list = companies.filter((c) => {
       if (typeFilter !== "All" && c.type !== typeFilter) return false;
       const app = applications[c.id] || {};
       const status = app.status || "not_applied";
       if (statusFilter !== "all" && status !== statusFilter) return false;
       if (query.trim()) {
         const q = query.toLowerCase();
-        const hay = `${c.name} ${c.area} ${c.summary} ${c.type}`.toLowerCase();
+        const hay = `${c.name} ${c.area} ${c.summary} ${c.type} ${app.notes || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -70,7 +74,7 @@ export default function App() {
     }
 
     return list;
-  }, [typeFilter, statusFilter, sortBy, query, applications]);
+  }, [typeFilter, statusFilter, sortBy, query, applications, companies]);
 
   const iftCount = COMPANIES.filter((c) => c.type === "IFT").length;
   const c911Count = COMPANIES.filter((c) => c.type === "911").length;
@@ -88,16 +92,36 @@ export default function App() {
     <div className="shell">
       <header className="hero">
         <p className="brand">EMT Tracker</p>
-        <h1>Ambulance company applications</h1>
+        <h1>{isOther ? "Other EMT opportunities" : "Ambulance company applications"}</h1>
         <p className="lede">
-          {iftCount} IFT · {c911Count} 911 · {hybridCount} hybrid near UCLA —
-          start IFT, transfer to 911. Progress saves in this browser.
+          {isOther
+            ? "Event-work leads near Westwood (90024), researched for a newly certified EMT. Eligibility notes distinguish applications from inquiries."
+            : `${iftCount} IFT · ${c911Count} 911 · ${hybridCount} hybrid near UCLA — start IFT, transfer to 911. Progress saves in this browser.`}
         </p>
       </header>
 
+      <nav className="section-nav" aria-label="Tracker sections">
+        {[
+          ["ambulance", "Ambulance companies", COMPANIES.length],
+          ["other", "Other EMT opportunities", OPPORTUNITIES.length],
+        ].map(([id, label, count]) => (
+          <button key={id} type="button" aria-pressed={section === id}
+            className={section === id ? "active" : ""}
+            onClick={() => {
+              setSection(id);
+              setTypeFilter("All");
+              setStatusFilter("all");
+              setSortBy("default");
+              setQuery("");
+            }}>
+            {label} <span>{count}</span>
+          </button>
+        ))}
+      </nav>
+
       <section className="stats" aria-label="Application progress">
         {[
-          { key: "all", label: "Companies", value: COMPANIES.length },
+          { key: "all", label: isOther ? "Leads" : "Companies", value: companies.length },
           { key: "researching", label: "Researching", value: stats.researching },
           { key: "applied", label: "Applied", value: stats.applied },
           { key: "interview", label: "Interviews", value: stats.interview },
@@ -132,7 +156,7 @@ export default function App() {
 
         <div className="filter-row">
           <div className="type-filters" role="group" aria-label="Filter by type">
-            {TYPE_FILTERS.map((f) => (
+            {(isOther ? ["All", "Events"] : TYPE_FILTERS).map((f) => (
               <button
                 key={f}
                 type="button"
@@ -164,9 +188,11 @@ export default function App() {
               aria-label="Sort companies"
             >
               <option value="default">Sort: recommended</option>
-              <option value="difficulty">Sort: hire difficulty</option>
-              <option value="hireTime">Sort: hire speed</option>
-              <option value="pay">Sort: starting pay</option>
+              {!isOther && <>
+                <option value="difficulty">Sort: hire difficulty</option>
+                <option value="hireTime">Sort: hire speed</option>
+                <option value="pay">Sort: starting pay</option>
+              </>}
               <option value="status">Sort: application status</option>
             </select>
 
@@ -182,13 +208,13 @@ export default function App() {
       </section>
 
       <p className="result-count">
-        Showing {filtered.length} of {COMPANIES.length}
+        Showing {filtered.length} of {companies.length}
         {stats.inProgress > 0 && ` · ${stats.inProgress} in progress`}
       </p>
 
       <div className="company-list">
         {filtered.length === 0 ? (
-          <p className="empty">No companies match those filters.</p>
+          <p className="empty">No results match those filters.</p>
         ) : (
           filtered.map((company) => (
             <CompanyCard
